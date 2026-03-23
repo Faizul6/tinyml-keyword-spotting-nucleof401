@@ -2,7 +2,7 @@
 
 A bare-metal embedded machine learning pipeline that runs an 8-bit quantized Convolutional Neural Network (CNN) on an STM32 microcontroller to detect spoken keywords. 
 
-## 🎯 The Plan & Objective
+## The Plan & Objective
 The goal of this project was to deploy a custom Keyword Spotting (KWS) AI model onto a constrained microcontroller without an operating system. 
 
 **The Catch:** I did not have an external I2S MEMS microphone available for the STM32. 
@@ -14,7 +14,7 @@ The goal of this project was to deploy a custom Keyword Spotting (KWS) AI model 
 
 ---
 
-## 🛠️ Step 1: Model Training & Quantization
+## Step 1: Model Training & Quantization
 I trained a CNN on the Google Speech Commands dataset to recognize 8 distinct categories (e.g., "go", "stop", "up", "down", "yes", "no", "left", "right"). 
 
 <p align="center">
@@ -34,7 +34,7 @@ To make this fit on an STM32F4 (which has very limited RAM and Flash), the model
 
 ---
 
-## ⚙️ Step 2: X-CUBE-AI Integration
+## Step 2: X-CUBE-AI Integration
 Using STMicroelectronics' X-CUBE-AI expansion pack, I imported the `.tflite` model directly into STM32CubeIDE. The tool analyzed the neural network and generated the necessary optimized C code to run the layers on the ARM Cortex-M4 processor.
 
 <p align="center">
@@ -46,7 +46,7 @@ Using STMicroelectronics' X-CUBE-AI expansion pack, I imported the `.tflite` mod
 
 ---
 
-## 💻 Step 3: Firmware & The C++ Conversion
+## Step 3: Firmware & The C++ Conversion
 I prefer writing application logic in C++ for better object-oriented structure. I renamed the auto-generated `main.c` to `main.cpp`, but immediately hit massive **Linker Errors**. 
 
 **The Problem:** The X-CUBE-AI engine is generated in pure C. When the C++ compiler tried to link the AI functions, it mangled the names, causing `undefined reference` errors.
@@ -54,7 +54,7 @@ I prefer writing application logic in C++ for better object-oriented structure. 
 
 ---
 
-## 🐍 Step 4: Python Hardware-in-the-Loop Bridge
+## Step 4: Python Hardware-in-the-Loop Bridge
 Because the STM32 didn't have a microphone, I wrote a Python script to act as the "Ears".
 1. Python continuously listens to the laptop mic using `pyaudio`.
 2. Upon detecting a volume spike, it records exactly 1 second of audio (16,000 samples).
@@ -79,7 +79,7 @@ Here are examples of the visual spectrograms my script generates right before se
 
 ---
 
-## 🐛 The Debugging Journey (Problems Faced & Solved)
+## The Debugging Journey (Problems Faced & Solved)
 
 Building this from scratch exposed me to several low-level embedded traps:
 
@@ -97,7 +97,7 @@ Building this from scratch exposed me to several low-level embedded traps:
 
 ---
 
-## ⚙️ Functionality & Current Hardware Behavior
+## Functionality & Current Hardware Behavior
 **How it works:**
 1. You say "Go" into the laptop microphone.
 2. Python builds the spectrogram and sends it to the Nucleo board over USB.
