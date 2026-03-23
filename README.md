@@ -86,11 +86,11 @@ Here are examples of the visual spectrograms my script generates right before se
 
 Building this from scratch exposed me to several low-level embedded traps:
 
-### 1. The Silent HardFault (CRC Clock Issue)
+### 1. The CRC Clock Issue
 * **Problem:** Every time I triggered the AI inference, the STM32 would completely crash and freeze. The LED would turn on and never turn off. 
 * **Solution:** X-CUBE-AI silently requires the hardware CRC (Cyclic Redundancy Check) module to be enabled to verify memory. The IDE didn't turn it on in my `main.cpp` automatically. I solved this by manually adding `__HAL_RCC_CRC_CLK_ENABLE();` before AI initialization.
 
-### 2. The ST Template "Death Trap"
+### 2. The ST Template
 * **Problem:** The default X-CUBE-AI `MX_X_CUBE_AI_Process()` template code includes a `do-while(res==0)` loop that traps the processor in an infinite loop if the data isn't perfectly pre-processed by their dummy functions. 
 * **Solution:** I completely gutted the wrapper function and forcefully injected my own memory copy (`memcpy`) to feed the input buffer, calling `ai_run()` directly.
 
@@ -114,4 +114,4 @@ While the AI math is lightning fast, the system architecture has a bottleneck. S
 To make this truly production-ready, I plan to:
 1. Attach a physical I2S MEMS microphone directly to the STM32.
 2. Port the STFT feature extraction logic from Python into C so the STM32 can generate its own spectrograms.
-3. Use DMA (Direct Memory Access) for UART/I2S transfers so the CPU can calculate neural network layers while simultaneously listening to the next audio sample!
+3. Use of a better MCU for more computation processes.
