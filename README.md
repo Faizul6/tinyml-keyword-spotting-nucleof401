@@ -1,6 +1,6 @@
 # 🎙️ TinyML Keyword Spotting: Hardware-in-the-Loop Edge AI on STM32
 
-A bare-metal embedded machine learning pipeline that runs an 8-bit quantized Convolutional Neural Network (CNN) on an STM32 microcontroller to detect spoken keywords. 
+A embedded machine learning pipeline that runs an 8-bit quantized Convolutional Neural Network (CNN) on an STM32 microcontroller to detect spoken keywords. 
 
 ## The Plan & Objective
 The goal of this project was to deploy a custom Keyword Spotting (KWS) AI model onto a constrained microcontroller without an operating system. 
@@ -47,10 +47,13 @@ Using STMicroelectronics' X-CUBE-AI expansion pack, I imported the `.tflite` mod
 ---
 
 ## Step 3: Firmware & The C++ Conversion
-I prefer writing application logic in C++ for better object-oriented structure. I renamed the auto-generated `main.c` to `main.cpp`, but immediately hit massive **Linker Errors**. 
+I actually prefer writing embedded application logic in pure **C**. However, working with Machine Learning pipelines and broader TinyML ecosystems often requires C++ compatibility for better data structuring and library integrations. 
 
-**The Problem:** The X-CUBE-AI engine is generated in pure C. When the C++ compiler tried to link the AI functions, it mangled the names, causing `undefined reference` errors.
-**The Solution:** I wrapped the AI library includes and initialization functions inside `extern "C"` blocks within my `main.cpp` file. This successfully bridged the C++ application code with the C AI libraries.
+To make the switch, I used STM32CubeIDE's built-in **"Convert to C++"** option from the top-left menu. This automatically reconfigured the project environment and changed my `main.c` to `main.cpp`. But doing this immediately triggered massive **Linker Errors**.
+
+**The Problem:** The X-CUBE-AI engine generates its neural network files in pure C. When the new C++ compiler tried to link those AI functions, it altered the function names behind the scenes (a C++ feature called "Name Mangling"), which caused `undefined reference` errors because it could no longer find the original C functions.
+
+**The Solution:** I wrapped the AI library includes and initialization functions inside `extern "C" { }` blocks within my `main.cpp` file. This successfully told the compiler to treat the X-CUBE-AI libraries as standard C, perfectly bridging my C++ application code with the generated C AI brain.
 
 ---
 
